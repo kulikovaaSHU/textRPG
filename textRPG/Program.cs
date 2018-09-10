@@ -11,6 +11,11 @@ namespace textRPG
         private static readonly Random random = new Random();
         private static readonly object syncLock = new object();
 
+        static class Globals
+        {
+            public static int score = 0;
+        }
+
         static int attack(int damage1, int damage2, int enemy_health)
         {
             int damage = roll_dice(damage1, damage2);
@@ -75,6 +80,181 @@ namespace textRPG
             Console.WriteLine("\nName: " + monster.name + "\nType: " + monster.type + "\nHealth: " + monster.health + "\nMoves: \n" + monster.attack_1_dec + "\n" + monster.attack_2_dec + "\n" + monster.attack_3_dec);
         }
 
+        static void encounter_main(Monster aquarex, Monster infernosaur, Monster pterowind)
+        {
+            Monster monster = random_monster();
+            Console.WriteLine("\nA wild " + monster.name + " (" + monster.type + ") appears!\n");
+
+            Monster player_monster = monster_picker(aquarex, infernosaur, pterowind);
+            Console.WriteLine("\n" + player_monster.name + " go!");
+            attack_main(monster, player_monster);
+        }
+
+        static Monster monster_picker(Monster aquarex, Monster infernosaur, Monster pterowind)
+        {
+            Console.WriteLine("Which monster do you choose?");
+            output_monster(aquarex);
+            output_monster(infernosaur);
+            output_monster(pterowind);
+            Console.WriteLine("\nEnter Aquarex, Infernosaur or Pterowind: ");
+            string pick = Console.ReadLine();
+            if (pick != "Aquarex" && pick != "Infernosaur" && pick != "Pterowind")
+            {
+                Console.WriteLine("Invalid choice. Please enter monster's name to call it out (Aquarex, Infernosaur or Pterowind): ");
+                pick = Console.ReadLine();
+            }
+
+            Monster player_monster = aquarex;
+
+            if (pick == "Aquarex" || pick == "aquarex")
+            {
+                player_monster = aquarex;
+            }
+            else if (pick == "Infernosaur" || pick == "infernosaur")
+            {
+                player_monster = infernosaur;
+            }
+            else if (pick == "Pterowind" || pick == "pterowind")
+            {
+                player_monster = pterowind;
+            }
+
+            if (player_monster.fainted)
+            {
+                Console.WriteLine("\n" + player_monster.name + " has fainted and can't fight anymore... Pick a different monster.");
+                monster_picker(aquarex, infernosaur, pterowind);
+            }
+
+            return player_monster;
+        }
+
+        static void attack_main(Monster monster, Monster player_monster)
+        {
+            Console.WriteLine("\nYour turn!");
+            Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+            Console.WriteLine("Which move should " + player_monster.name + " use?");
+
+            Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
+            string move = Console.ReadLine();
+
+            if(move=="1")
+            {
+                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_1_dec + ".");
+                monster.health = attack(player_monster.attack1_1, player_monster.attack1_2, monster.health);
+            }
+            else if(move=="2")
+            {
+                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_2_dec + ".");
+                monster.health = attack(player_monster.attack2_1, player_monster.attack2_2, monster.health);
+            }
+            else if(move=="3")
+            {
+                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_3_dec + ".");
+                int health_roll = roll_dice(player_monster.attack3_1, player_monster.attack3_2);
+                if(player_monster.health != player_monster.init_health)
+                {
+                    if(player_monster.health + health_roll < player_monster.init_health)
+                    {
+                        player_monster.health -= health_roll;
+                        Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+                    }
+                    else if(player_monster.health + health_roll >= player_monster.init_health)
+                    {
+                        player_monster.health = player_monster.init_health;
+                        Console.WriteLine("\n" + player_monster.name + " is back to full health!");
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("\nUsed a healing move, but already at full health...");
+                }
+            }
+
+            if(monster.health <= 0)
+            {
+                Console.WriteLine("\n" + monster.name + " has been defeated!\n You move on.");
+                if(monster.init_health < 100)
+                {
+                    Console.WriteLine("\nScore + 5");
+                    Globals.score += 5;
+                }
+                else if (monster.init_health < 120)
+                {
+                    Console.WriteLine("\nScore + 10");
+                    Globals.score += 10;
+                }
+                else if (monster.init_health < 135)
+                {
+                    Console.WriteLine("\nScore + 15");
+                    Globals.score += 15;
+                }
+                else
+                {
+                    Console.WriteLine("\nScore + 20");
+                    Globals.score += 20;
+                }
+            }
+            else
+            {
+                Console.WriteLine("\n" + monster.name + "'s turn...");
+                int monster_move = roll_dice(1, 3);
+                if(monster_move == 1)
+                {
+                    Console.WriteLine("\n" + monster.name + " used a short range attack!");
+                    player_monster.health = monster_attack(monster.attack1_1, monster.attack1_2, player_monster.health);
+                }
+                else if(monster_move == 2)
+                {
+                    Console.WriteLine("\n" + monster.name + " used a long range attack!");
+                    player_monster.health = monster_attack(monster.attack2_1, monster.attack2_2, player_monster.health);
+                }
+                else if(monster_move == 3)
+                {
+                    if(monster.health == monster.init_health)
+                    {
+                        Console.WriteLine("\n" + monster.name + " used a healing move, but already at full health...");
+                    }
+                    else if(monster.health != monster.init_health)
+                    {
+                        int monster_healing_roll = roll_dice(monster.attack3_1, monster.attack3_2);
+                        if(monster.health + monster_healing_roll < monster.init_health)
+                        {
+                            monster.health += monster_healing_roll;
+                            Console.WriteLine("\n" + monster.name + "'s health: " + monster.health);
+                        }
+                        else
+                        {
+                            monster.health = monster.init_health;
+                            Console.WriteLine("\n" + monster.name + " is back to full health...");
+                        }
+                    }
+                }
+
+                if(player_monster.health <= 0)
+                {
+                    Console.WriteLine("\n" + player_monster.name + " has been defeated...");
+                    player_monster.fainted = true;
+                    Console.WriteLine("\nScore - 10");
+                    if(Globals.score > 0)
+                    {
+                        if(Globals.score - 10 > 0)
+                        {
+                            Globals.score -= 10;
+                        }
+                        else
+                        {
+                            Globals.score = 0;
+                        }
+                    }
+                    Console.WriteLine("\nYou ran away!");
+                }
+                else
+                {
+                    attack_main(monster, player_monster);
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             Monster aquarex = new Monster();
@@ -129,10 +309,7 @@ namespace textRPG
             Console.WriteLine("\n <3 <3 <3 Loading <3 <3 <3 \n");
             Console.WriteLine("       Little Monsters\n\n");
 
-            output_monster(aquarex);
-            output_monster(infernosaur);
-            output_monster(pterowind);
-
+            encounter_main(aquarex, infernosaur, pterowind);
 
             Console.ReadLine();
         }
