@@ -75,6 +75,58 @@ namespace textRPG
             return monster;
         }
 
+        static string random_story()
+        {
+            string[] stories = { "Suddenly a giant shadow covers you!\n",
+                                "You see a bush rustle!\n",
+                                "You see a shadow above, you look up...\n",
+                                "You feel a presence behind you, you turn around!\n",
+                                "You smell something attrocious...\n",
+                                "You step on something... It's a tail!\n",
+                                "You feel uneasy...\n",
+                                "Your monsters start growling.\n",
+                                "Shiver runs down your body...\n",
+                                "You hear a menacing screach.\n",
+                                "Ground shakes under your feet!\n",
+                                "Startled birds fly away...\n",
+                                "Pleasant aroma surrounds you...\n",
+                                "Suddenly it's hard to breathe!\n",
+                                "You feel dropplets of water on your skin.\n",
+                                "There is a bright light!\n",
+                                "The skies darken...\n",
+                                "Intricate snowflakes land on your hair...\n",
+                                "You feel crushing pressure!\n",
+                                "A feeling of total dismay washes over you...\n",
+                                "Claws dig in into your shoulder!\n",
+                                "Dropplets of sweat form on your forehead...\n"
+                                };
+            string story_line = stories[roll_dice(0, stories.Length - 1)];
+            return story_line;
+        }
+
+        static string random_adventure()
+        {
+            string[] adventures = { "You walk for hours, almost ready to turn back when: ",
+                                   "You turn right, facing a stone cliff: ",
+                                   "Your monster drags you forward: ",
+                                   "You don't even take two steps when: ",
+                                   "You feel like you walk in a circle through fog: ",
+                                   "You sit down to shut your eyes for a couple minutes, when: ",
+                                   "You backtrack through the field: ",
+                                   "You enter a dark forest: ",
+                                   "You sit down to sketch your previous foe when: ",
+                                   "You run and run, finally you stop, but: ",
+                                   "You find a hollow tree and hope to hide in it, however: ",
+                                   "You climb a thick oak, finally stopping to take a breath on a big branch when: ",
+                                   "You aren't careful and in your hurry slip and slide into a ravine: ",
+                                   "It's getting dark and your feet hurt, you drag yourself to rest under a fallen tree, but: ",
+                                   "You are out of water. You find a small stream. It gleams red, but thirst urges you to drink: ",
+                                   "You turn left, sharp drop off is only steps away: "
+                                  };
+            string new_adv = adventures[roll_dice(0, adventures.Length - 1)];
+            return new_adv;
+        }
+
         static void output_monster(Monster monster)
         {
             Console.WriteLine("\nName: " + monster.name + "\nType: " + monster.type + "\nHealth: " + monster.health + "\nMoves: \n" + monster.attack_1_dec + "\n" + monster.attack_2_dec + "\n" + monster.attack_3_dec);
@@ -193,6 +245,7 @@ namespace textRPG
                     Console.WriteLine("\nScore + 20");
                     Globals.score += 20;
                 }
+                Console.WriteLine("\nCurrent Score: " + Globals.score);
             }
             else
             {
@@ -234,7 +287,7 @@ namespace textRPG
                 {
                     Console.WriteLine("\n" + player_monster.name + " has been defeated...");
                     player_monster.fainted = true;
-                    Console.WriteLine("\nScore - 10");
+                    Console.WriteLine("\nScore - 10\nCurrent Score: " + Globals.score);
                     if(Globals.score > 0)
                     {
                         if(Globals.score - 10 > 0)
@@ -309,7 +362,42 @@ namespace textRPG
             Console.WriteLine("\n <3 <3 <3 Loading <3 <3 <3 \n");
             Console.WriteLine("       Little Monsters\n\n");
 
+            Console.WriteLine("You walk into the field:");
+            Console.WriteLine("\n"+ random_adventure() + random_story());
             encounter_main(aquarex, infernosaur, pterowind);
+        
+            Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
+            string cont = Console.ReadLine();
+            
+            if(cont == "Yes" || cont == "yes" || cont == "y" || cont == "Y")
+            {
+                Console.WriteLine("\n----------------------------------------------------\n");
+                bool continue_game = true;
+                while(continue_game)
+                {
+                    Console.WriteLine("\n----------------------------------------------------\n");
+                    Console.WriteLine("\n" + random_adventure() + random_story());
+                    encounter_main(aquarex, infernosaur, pterowind);
+                    Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
+                    cont = Console.ReadLine();
+                    if (cont == "Yes" || cont == "yes" || cont == "y" || cont == "Y")
+                    {
+                        Console.WriteLine("\n----------------------------------------------------\n");
+                        Console.WriteLine("\n" + random_adventure() + random_story());
+                        continue_game = true;
+                    }
+                    else
+                    {
+                        continue_game = false;
+                        Console.WriteLine("\nYou find your way home and call it a night.");
+                    }
+                }
+            }
+
+            else
+            {
+                Console.WriteLine("\nYou find your way home and call it a night.");
+            }
 
             Console.ReadLine();
         }
