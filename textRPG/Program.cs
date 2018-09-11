@@ -138,6 +138,11 @@ namespace textRPG
             Console.WriteLine("\nA wild " + monster.name + " (" + monster.type + ") appears!\n");
 
             Monster player_monster = monster_picker(aquarex, infernosaur, pterowind);
+            if(player_monster.name == "Invalid")
+            {
+                player_monster = monster_picker(aquarex, infernosaur, pterowind);
+                Console.WriteLine("!!! Something went wrong !!!");
+            }
             Console.WriteLine("\n" + player_monster.name + " go!");
             attack_main(monster, player_monster);
             if(aquarex.health <= 0 && infernosaur.health <= 0 && pterowind.health <= 0)
@@ -163,15 +168,14 @@ namespace textRPG
                 Console.WriteLine("Invalid choice. Please enter monster's name to call it out (Aquarex, Infernosaur or Pterowind): ");
                 pick = Console.ReadLine();
             }
-
-            Monster monster_pick = infernosaur;
+            
 
             if (pick == "Aquarex" || pick == "aquarex" || pick == "a")
             {
                 if (aquarex.fainted)
                 {
                     Console.WriteLine("\n" + aquarex.name + " has fainted and can't fight anymore... Pick a different monster.");
-                    monster_picker(aquarex, infernosaur, pterowind);
+                    return monster_picker(aquarex, infernosaur, pterowind);
                 }
                 else
                 {
@@ -183,7 +187,7 @@ namespace textRPG
                 if (infernosaur.fainted)
                 {
                     Console.WriteLine("\n" + infernosaur.name + " has fainted and can't fight anymore... Pick a different monster.");
-                    monster_picker(aquarex, infernosaur, pterowind);
+                    return monster_picker(aquarex, infernosaur, pterowind);
                 }
                 else
                 {
@@ -195,7 +199,7 @@ namespace textRPG
                 if (pterowind.fainted)
                 {
                     Console.WriteLine("\n" + pterowind.name + " has fainted and can't fight anymore... Pick a different monster.");
-                    monster_picker(aquarex, infernosaur, pterowind);
+                    return monster_picker(aquarex, infernosaur, pterowind);
                 }
                 else
                 {
@@ -204,10 +208,13 @@ namespace textRPG
             }
             else
             {
-                Console.WriteLine("An error has occured. Pick was: " + pick);
+                
             }
-
-            return infernosaur;
+            Console.WriteLine("An error has occured. Pick was: " + pick);
+            Monster empty_monster = new Monster();
+            empty_monster.name = "Invalid";
+            return empty_monster;
+            
         }
 
         static void attack_main(Monster monster, Monster player_monster)
