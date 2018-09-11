@@ -132,7 +132,7 @@ namespace textRPG
             Console.WriteLine("\nName: " + monster.name + "\nType: " + monster.type + "\nHealth: " + monster.health + "\nMoves: \n" + monster.attack_1_dec + "\n" + monster.attack_2_dec + "\n" + monster.attack_3_dec);
         }
 
-        static void encounter_main(Monster aquarex, Monster infernosaur, Monster pterowind)
+        static bool encounter_main(Monster aquarex, Monster infernosaur, Monster pterowind)
         {
             Monster monster = random_monster();
             Console.WriteLine("\nA wild " + monster.name + " (" + monster.type + ") appears!\n");
@@ -140,6 +140,14 @@ namespace textRPG
             Monster player_monster = monster_picker(aquarex, infernosaur, pterowind);
             Console.WriteLine("\n" + player_monster.name + " go!");
             attack_main(monster, player_monster);
+            if(aquarex.health <= 0 && infernosaur.health <= 0 && pterowind.health <= 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         static Monster monster_picker(Monster aquarex, Monster infernosaur, Monster pterowind)
@@ -150,44 +158,73 @@ namespace textRPG
             output_monster(pterowind);
             Console.WriteLine("\nEnter Aquarex, Infernosaur or Pterowind: ");
             string pick = Console.ReadLine();
-            if (pick != "Aquarex" && pick != "Infernosaur" && pick != "Pterowind")
+            while (pick != "Aquarex" && pick != "Infernosaur" && pick != "Pterowind" && pick != "aquarex" && pick != "infernosaur" && pick != "pterowind" && pick != "a" && pick != "i" && pick != "p")
             {
                 Console.WriteLine("Invalid choice. Please enter monster's name to call it out (Aquarex, Infernosaur or Pterowind): ");
                 pick = Console.ReadLine();
             }
 
-            Monster player_monster = aquarex;
+            Monster monster_pick = infernosaur;
 
-            if (pick == "Aquarex" || pick == "aquarex")
+            if (pick == "Aquarex" || pick == "aquarex" || pick == "a")
             {
-                player_monster = aquarex;
+                if (aquarex.fainted)
+                {
+                    Console.WriteLine("\n" + aquarex.name + " has fainted and can't fight anymore... Pick a different monster.");
+                    monster_picker(aquarex, infernosaur, pterowind);
+                }
+                else
+                {
+                    return aquarex;
+                }
             }
-            else if (pick == "Infernosaur" || pick == "infernosaur")
+            else if (pick == "Infernosaur" || pick == "infernosaur" || pick == "i")
             {
-                player_monster = infernosaur;
+                if (infernosaur.fainted)
+                {
+                    Console.WriteLine("\n" + infernosaur.name + " has fainted and can't fight anymore... Pick a different monster.");
+                    monster_picker(aquarex, infernosaur, pterowind);
+                }
+                else
+                {
+                    return infernosaur;
+                }
             }
-            else if (pick == "Pterowind" || pick == "pterowind")
+            else if (pick == "Pterowind" || pick == "pterowind" || pick == "p")
             {
-                player_monster = pterowind;
+                if (pterowind.fainted)
+                {
+                    Console.WriteLine("\n" + pterowind.name + " has fainted and can't fight anymore... Pick a different monster.");
+                    monster_picker(aquarex, infernosaur, pterowind);
+                }
+                else
+                {
+                    return pterowind;
+                }
+            }
+            else
+            {
+                Console.WriteLine("An error has occured. Pick was: " + pick);
             }
 
-            if (player_monster.fainted)
-            {
-                Console.WriteLine("\n" + player_monster.name + " has fainted and can't fight anymore... Pick a different monster.");
-                monster_picker(aquarex, infernosaur, pterowind);
-            }
-
-            return player_monster;
+            return infernosaur;
         }
 
         static void attack_main(Monster monster, Monster player_monster)
         {
             Console.WriteLine("\nYour turn!");
             Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+            string move;
             Console.WriteLine("Which move should " + player_monster.name + " use?");
 
             Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
-            string move = Console.ReadLine();
+            move = Console.ReadLine();
+            while (move != "1" && move != "2" && move != "3") {
+                Console.WriteLine("Invalid choice. Which move should " + player_monster.name + " use (1, 2, or 3)?");
+
+                Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
+                move = Console.ReadLine();
+            }
 
             if(move=="1")
             {
@@ -255,11 +292,19 @@ namespace textRPG
                 {
                     Console.WriteLine("\n" + monster.name + " used a short range attack!");
                     player_monster.health = monster_attack(monster.attack1_1, monster.attack1_2, player_monster.health);
+                    if(player_monster.health < 0)
+                    {
+                        player_monster.health = 0;
+                    }
                 }
                 else if(monster_move == 2)
                 {
                     Console.WriteLine("\n" + monster.name + " used a long range attack!");
                     player_monster.health = monster_attack(monster.attack2_1, monster.attack2_2, player_monster.health);
+                    if (player_monster.health < 0)
+                    {
+                        player_monster.health = 0;
+                    }
                 }
                 else if(monster_move == 3)
                 {
@@ -364,7 +409,7 @@ namespace textRPG
 
             Console.WriteLine("You walk into the field:");
             Console.WriteLine("\n"+ random_adventure() + random_story());
-            encounter_main(aquarex, infernosaur, pterowind);
+            bool all_down = encounter_main(aquarex, infernosaur, pterowind);
         
             Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
             string cont = Console.ReadLine();
@@ -377,19 +422,28 @@ namespace textRPG
                 {
                     Console.WriteLine("\n----------------------------------------------------\n");
                     Console.WriteLine("\n" + random_adventure() + random_story());
-                    encounter_main(aquarex, infernosaur, pterowind);
-                    Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
-                    cont = Console.ReadLine();
-                    if (cont == "Yes" || cont == "yes" || cont == "y" || cont == "Y")
+                    all_down = encounter_main(aquarex, infernosaur, pterowind);
+                    if(all_down)
                     {
-                        Console.WriteLine("\n----------------------------------------------------\n");
-                        Console.WriteLine("\n" + random_adventure() + random_story());
-                        continue_game = true;
+                        continue_game = false;
+                        Console.WriteLine("\nAll your monsters have fainted...");
+                        Console.WriteLine("\nYou hurry to find your way home and call it a night.");
                     }
                     else
                     {
-                        continue_game = false;
-                        Console.WriteLine("\nYou find your way home and call it a night.");
+                        Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
+                        cont = Console.ReadLine();
+                        if (cont == "Yes" || cont == "yes" || cont == "y" || cont == "Y")
+                        {
+                            Console.WriteLine("\n----------------------------------------------------\n");
+                            Console.WriteLine("\n" + random_adventure() + random_story());
+                            continue_game = true;
+                        }
+                        else
+                        {
+                            continue_game = false;
+                            Console.WriteLine("\nYou find your way home and call it a night.");
+                        }
                     }
                 }
             }
