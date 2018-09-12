@@ -1,0 +1,7 @@
+﻿- Player can heal their monsters
+- Typings (Wind, Fire etc) are more, less or neutral effective again each other
+- Items
+- Continue fighting monster with a different monster (switching)
+- Friendlier UI
+- More story
+- More player monsters

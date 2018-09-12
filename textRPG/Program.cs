@@ -16,6 +16,60 @@ namespace textRPG
             public static int score = 0;
         }
 
+        static class Inventory
+        {
+            public static int potion = 1;
+            public static int megaPotion = 0;
+            public static int healAllPotion = 0;
+        }
+
+        static class Potion
+        {
+            public const int healAmount = 25;
+            public const int probability = 50;
+        }
+
+        static class MegaPotion
+        {
+            public const int healAmount = 50;
+            public const int probability = 25;
+        }
+
+        static class HealAllPotion
+        {
+            public const int healAmount = 120;
+            public const int probability = 5;
+        }
+
+        static void inventory_listing()
+        {
+            Console.WriteLine("\nInventory:\nPotions:          " + Inventory.potion + " (" + Potion.healAmount + " heal)\nMega Potions:     " + Inventory.megaPotion + " (" + MegaPotion.healAmount + " heal)\nHealAll Potions:  " + Inventory.healAllPotion + " (" + HealAllPotion.healAmount + " heal)\n");
+        }
+
+        static void random_item_drop()
+        {
+            int roll = roll_dice(0, 100);
+            if (roll <= 70 && roll > 20)
+            {
+                Inventory.potion += 1;
+                Console.WriteLine("A Potion was dropped. You pick it up and put it in your inventory.\n");
+            }
+            else if (roll > 70 && roll <= 95)
+            {
+                Inventory.megaPotion += 1;
+                Console.WriteLine("A Mega Potion was dropped. You pick it up and put it in your inventory.\n");
+            }
+            else if (roll > 95)
+            {
+                Inventory.healAllPotion += 1;
+                Console.WriteLine("A HealAll Potion was dropped. You pick it up and put it in your inventory.\n");
+            }
+            else if (roll <= 20)
+            {
+                Console.WriteLine("Monster didn't drop anything.\n");
+            }
+        }
+
         static int attack(int damage1, int damage2, int enemy_health)
         {
             int damage = roll_dice(damage1, damage2);
@@ -217,58 +271,129 @@ namespace textRPG
             
         }
 
+        static Monster use_item(Monster monster)
+        {
+
+            inventory_listing();
+            Console.WriteLine("Which item do you want to use? (1,2 or 3)");
+            string itemToUse = Console.ReadLine();
+            if ((itemToUse == "1" && Inventory.potion <= 0) || (itemToUse == "2" && Inventory.megaPotion <= 0) || (itemToUse == "3" && Inventory.healAllPotion <= 0))
+            {
+                Console.WriteLine("\nYou are out of that item. You waste time looking for the item and lose your turn.");
+            }
+            else
+            {
+                if (itemToUse == "1")
+                {
+                    if (monster.health + Potion.healAmount >= monster.init_health)
+                    {
+                        monster.health = monster.init_health;
+                        Inventory.potion -= 1;
+                        Console.WriteLine("\nUsed a Potion on " + monster.name + ". Back to full health.\n");
+                    }
+                    else if (monster.health + Potion.healAmount < monster.init_health)
+                    {
+                        monster.health += Potion.healAmount;
+                        Console.WriteLine("\nUsed a Potion on " + monster.name + ". Current health: " + monster.health + "\n");
+                    }
+                }
+                else if (itemToUse == "2")
+                {
+                    if (monster.health + MegaPotion.healAmount >= monster.init_health)
+                    {
+                        monster.health = monster.init_health;
+                        Inventory.megaPotion -= 1;
+                        Console.WriteLine("\nUsed a Mega Potion on " + monster.name + ". Back to full health.\n");
+                    }
+                    else if (monster.health + MegaPotion.healAmount < monster.init_health)
+                    {
+                        monster.health += MegaPotion.healAmount;
+                        Inventory.healAllPotion -= 1;
+                        Console.WriteLine("\nUsed a Mega Potion on " + monster.name + ". Current health: " + monster.health + "\n");
+                    }
+                }
+                else if (itemToUse == "3")
+                {
+                    if (monster.health + HealAllPotion.healAmount >= monster.init_health)
+                    {
+                        monster.health = monster.init_health;
+                        Console.WriteLine("\nUsed a HealAll Potion on " + monster.name + ". Back to full health.\n");
+                    }
+                    else if (monster.health + HealAllPotion.healAmount < monster.init_health)
+                    {
+                        monster.health += HealAllPotion.healAmount;
+                        Console.WriteLine("\nUsed a HealAll Potion on " + monster.name + ". Current health: " + monster.health + "\n");
+                    }
+                }
+            }
+            return monster;
+        }
+
         static void attack_main(Monster monster, Monster player_monster)
         {
             Console.WriteLine("\nYour turn!");
             Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
-            string move;
-            Console.WriteLine("Which move should " + player_monster.name + " use?");
-
-            Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
-            move = Console.ReadLine();
-            while (move != "1" && move != "2" && move != "3") {
-                Console.WriteLine("Invalid choice. Which move should " + player_monster.name + " use (1, 2, or 3)?");
+            Console.WriteLine("Use item or a move? Enter i to open inventory or m to pick a move: ");
+            string pick = Console.ReadLine();
+            if(pick == "i" || pick == "item" || pick == "inventory")
+            {
+                player_monster = use_item(player_monster);
+            }
+            else
+            {
+                string move;
+                Console.WriteLine("Which move should " + player_monster.name + " use?");
 
                 Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
                 move = Console.ReadLine();
-            }
+                while (move != "1" && move != "2" && move != "3")
+                {
+                    Console.WriteLine("Invalid choice. Which move should " + player_monster.name + " use (1, 2, or 3)?");
 
-            if(move=="1")
-            {
-                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_1_dec + ".");
-                monster.health = attack(player_monster.attack1_1, player_monster.attack1_2, monster.health);
-            }
-            else if(move=="2")
-            {
-                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_2_dec + ".");
-                monster.health = attack(player_monster.attack2_1, player_monster.attack2_2, monster.health);
-            }
-            else if(move=="3")
-            {
-                Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_3_dec + ".");
-                int health_roll = roll_dice(player_monster.attack3_1, player_monster.attack3_2);
-                if(player_monster.health != player_monster.init_health)
+                    Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
+                    move = Console.ReadLine();
+                }
+
+                if (move == "1")
                 {
-                    if(player_monster.health + health_roll < player_monster.init_health)
+                    Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_1_dec + ".");
+                    monster.health = attack(player_monster.attack1_1, player_monster.attack1_2, monster.health);
+                }
+                else if (move == "2")
+                {
+                    Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_2_dec + ".");
+                    monster.health = attack(player_monster.attack2_1, player_monster.attack2_2, monster.health);
+                }
+                else if (move == "3")
+                {
+                    Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_3_dec + ".");
+                    int health_roll = roll_dice(player_monster.attack3_1, player_monster.attack3_2);
+                    if (player_monster.health != player_monster.init_health)
                     {
-                        player_monster.health -= health_roll;
-                        Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+                        if (player_monster.health + health_roll < player_monster.init_health)
+                        {
+                            player_monster.health -= health_roll;
+                            Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+                        }
+                        else if (player_monster.health + health_roll >= player_monster.init_health)
+                        {
+                            player_monster.health = player_monster.init_health;
+                            Console.WriteLine("\n" + player_monster.name + " is back to full health!");
+                        }
                     }
-                    else if(player_monster.health + health_roll >= player_monster.init_health)
+                    else
                     {
-                        player_monster.health = player_monster.init_health;
-                        Console.WriteLine("\n" + player_monster.name + " is back to full health!");
+                        Console.WriteLine("\nUsed a healing move, but already at full health...");
                     }
                 }
-                else
-                {
-                    Console.WriteLine("\nUsed a healing move, but already at full health...");
-                }
             }
+            
 
             if(monster.health <= 0)
             {
-                Console.WriteLine("\n" + monster.name + " has been defeated!\n You move on.");
+                Console.WriteLine("\n" + monster.name + " has been defeated!\n");
+                random_item_drop();
+                Console.WriteLine("\nYou move on.");
                 if(monster.init_health < 100)
                 {
                     Console.WriteLine("\nScore + 5");
@@ -410,7 +535,9 @@ namespace textRPG
             pterowind.init_health = 100;
             pterowind.fainted = false;
 
-            
+
+            inventory_listing();
+
             Console.WriteLine("\n <3 <3 <3 Loading <3 <3 <3 \n");
             Console.WriteLine("       Little Monsters\n\n");
 
