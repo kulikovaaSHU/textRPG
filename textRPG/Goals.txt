@@ -1,6 +1,6 @@
-﻿- Player can heal their monsters
-- Typings (Wind, Fire etc) are more, less or neutral effective again each other
-- Items
+﻿+ Player can heal their monsters
+- Typings (Wind, Fire etc) are more, less or neutral effective against each other
++ Items
 - Continue fighting monster with a different monster (switching)
 - Friendlier UI
 - More story

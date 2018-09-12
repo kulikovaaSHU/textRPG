@@ -43,18 +43,18 @@ namespace textRPG
 
         static void inventory_listing()
         {
-            Console.WriteLine("\nInventory:\nPotions:          " + Inventory.potion + " (" + Potion.healAmount + " heal)\nMega Potions:     " + Inventory.megaPotion + " (" + MegaPotion.healAmount + " heal)\nHealAll Potions:  " + Inventory.healAllPotion + " (" + HealAllPotion.healAmount + " heal)\n");
+            Console.WriteLine("\nInventory:\n1. Potions:          " + Inventory.potion + " (" + Potion.healAmount + " heal)\n2. Mega Potions:     " + Inventory.megaPotion + " (" + MegaPotion.healAmount + " heal)\n3. HealAll Potions:  " + Inventory.healAllPotion + " (" + HealAllPotion.healAmount + " heal)\n");
         }
 
         static void random_item_drop()
         {
             int roll = roll_dice(0, 100);
-            if (roll <= 70 && roll > 20)
+            if (roll <= 65 && roll > 20)
             {
                 Inventory.potion += 1;
                 Console.WriteLine("A Potion was dropped. You pick it up and put it in your inventory.\n");
             }
-            else if (roll > 70 && roll <= 95)
+            else if (roll > 65 && roll <= 95)
             {
                 Inventory.megaPotion += 1;
                 Console.WriteLine("A Mega Potion was dropped. You pick it up and put it in your inventory.\n");
@@ -536,7 +536,6 @@ namespace textRPG
             pterowind.fainted = false;
 
 
-            inventory_listing();
 
             Console.WriteLine("\n <3 <3 <3 Loading <3 <3 <3 \n");
             Console.WriteLine("       Little Monsters\n\n");
