@@ -331,6 +331,7 @@ namespace textRPG
                     else if (monster.health + Potion.healAmount < monster.init_health)
                     {
                         monster.health += Potion.healAmount;
+                        Inventory.potion -= 1;
                         Console.WriteLine("\nUsed a Potion on " + monster.name + ". Current health: " + monster.health + "\n");
                     }
                 }
@@ -348,7 +349,7 @@ namespace textRPG
                     else if (monster.health + MegaPotion.healAmount < monster.init_health)
                     {
                         monster.health += MegaPotion.healAmount;
-                        Inventory.healAllPotion -= 1;
+                        Inventory.megaPotion -= 1;
                         Console.WriteLine("\nUsed a Mega Potion on " + monster.name + ". Current health: " + monster.health + "\n");
                     }
                 }
@@ -359,12 +360,14 @@ namespace textRPG
                     if (monster.health + HealAllPotion.healAmount >= monster.init_health)
                     {
                         monster.health = monster.init_health;
+                        Inventory.healAllPotion -= 1;
                         Console.WriteLine("\nUsed a HealAll Potion on " + monster.name + ". Back to full health.\n");
                     }
                     // Partial heal
                     else if (monster.health + HealAllPotion.healAmount < monster.init_health)
                     {
                         monster.health += HealAllPotion.healAmount;
+                        Inventory.healAllPotion -= 1;
                         Console.WriteLine("\nUsed a HealAll Potion on " + monster.name + ". Current health: " + monster.health + "\n");
                     }
                 }
@@ -444,12 +447,13 @@ namespace textRPG
                 }
             }
             
-
+            // If monster is defeated
             if(monster.health <= 0)
             {
                 Console.WriteLine("\n" + monster.name + " has been defeated!\n");
                 random_item_drop();
                 Console.WriteLine("\nYou move on.");
+                // Score based on enemy health
                 if(monster.init_health < 100)
                 {
                     Console.WriteLine("\nScore + 5");
@@ -470,12 +474,16 @@ namespace textRPG
                     Console.WriteLine("\nScore + 20");
                     Globals.score += 20;
                 }
+                // Output current score
                 Console.WriteLine("\nCurrent Score: " + Globals.score);
             }
+            // Enemy turn
             else
             {
                 Console.WriteLine("\n" + monster.name + "'s turn...");
+                // Roll dice for which move is picked
                 int monster_move = roll_dice(1, 3);
+                // First move picked
                 if(monster_move == 1)
                 {
                     Console.WriteLine("\n" + monster.name + " used a short range attack!");
@@ -485,6 +493,7 @@ namespace textRPG
                         player_monster.health = 0;
                     }
                 }
+                // Second move picked
                 else if(monster_move == 2)
                 {
                     Console.WriteLine("\n" + monster.name + " used a long range attack!");
@@ -494,6 +503,7 @@ namespace textRPG
                         player_monster.health = 0;
                     }
                 }
+                // Healing move picked
                 else if(monster_move == 3)
                 {
                     if(monster.health == monster.init_health)
@@ -515,11 +525,13 @@ namespace textRPG
                         }
                     }
                 }
-
+                // If player's monster is defeated
                 if(player_monster.health <= 0)
                 {
                     Console.WriteLine("\n" + player_monster.name + " has been defeated...");
+                    // Mark as fainted
                     player_monster.fainted = true;
+                    // Lose points
                     Console.WriteLine("\nScore - 10\nCurrent Score: " + Globals.score);
                     if(Globals.score > 0)
                     {
@@ -534,6 +546,7 @@ namespace textRPG
                     }
                     Console.WriteLine("\nYou ran away!");
                 }
+                // If neither are defeated, continue playing
                 else
                 {
                     attack_main(monster, player_monster);
