@@ -8,46 +8,55 @@ namespace textRPG
 {
     class Program
     {
+        // Generate a random from clock to use for entire game.
         private static readonly Random random = new Random();
         private static readonly object syncLock = new object();
 
+        // Simulates global variable score
         static class Globals
         {
             public static int score = 0;
         }
 
+        // Stores ammounts of items in inventory
         static class Inventory
         {
-            public static int potion = 1;
+            public static int potion = 0;
             public static int megaPotion = 0;
             public static int healAllPotion = 0;
         }
 
+        // Stores info about Potion item
         static class Potion
         {
             public const int healAmount = 25;
             public const int probability = 50;
         }
 
+        // Stores info about Mega Potion item
         static class MegaPotion
         {
             public const int healAmount = 50;
             public const int probability = 25;
         }
 
+        // Stores info about HealAll Potion item
         static class HealAllPotion
         {
             public const int healAmount = 120;
             public const int probability = 5;
         }
 
+        // Lists current inventory contents
         static void inventory_listing()
         {
             Console.WriteLine("\nInventory:\n1. Potions:          " + Inventory.potion + " (" + Potion.healAmount + " heal)\n2. Mega Potions:     " + Inventory.megaPotion + " (" + MegaPotion.healAmount + " heal)\n3. HealAll Potions:  " + Inventory.healAllPotion + " (" + HealAllPotion.healAmount + " heal)\n");
         }
 
+        // A function to generate a random item dropped upon defeating an enemy
         static void random_item_drop()
         {
+            // Potion is more likely to drop than mega potion, which is more likely than healall potion. Sometimes nothing drops.
             int roll = roll_dice(0, 100);
             if (roll <= 65 && roll > 20)
             {
@@ -70,6 +79,7 @@ namespace textRPG
             }
         }
 
+        // Function for player's monster attack
         static int attack(int damage1, int damage2, int enemy_health)
         {
             int damage = roll_dice(damage1, damage2);
@@ -78,6 +88,7 @@ namespace textRPG
             return enemy_health;
         }
 
+        // Function for enemy attack
         static int monster_attack(int damage1, int damage2, int monster_health)
         {
             int damage = roll_dice(damage1, damage2);
@@ -86,6 +97,7 @@ namespace textRPG
             return monster_health;
         }
 
+        // Randomized name made of prefix and suffix for monster
         static string random_name()
         {
             string[] name_prefix = {"Fire","Frost","Wind","Aqua","Wild","Dark","Shadow","Devil","Evil","Spark","Ptero","Terano","Electro","Stego","Mega","Super","Free","Flex","Stone","Ground","Brave","Blood","Carve","Bone","Beak","Fast","Fright","Moon","Mad","Keen","Claw"};
@@ -96,6 +108,7 @@ namespace textRPG
             return name;
         }
 
+        // Random type assignment for monster
         static string random_type()
         {
             string[] types = {"Fire","Frost","Ice","Shadow","Evil","Dark","Grass","Water","Bug","Amphibian","Lava","Space","Dinosaur","Magic","Flying","Wind","Fighting"};
@@ -104,6 +117,7 @@ namespace textRPG
             return monster_type;
         }
 
+        // Random number generator
         static int roll_dice(int min, int max)
         {
             lock (syncLock)
@@ -113,6 +127,7 @@ namespace textRPG
             }
         }
 
+        // Random monster generator
         static Monster random_monster()
         {
             Monster monster = new Monster();
@@ -129,6 +144,7 @@ namespace textRPG
             return monster;
         }
 
+        // Random story generator. Second part
         static string random_story()
         {
             string[] stories = { "Suddenly a giant shadow covers you!\n",
@@ -158,6 +174,7 @@ namespace textRPG
             return story_line;
         }
 
+        // Random adventure move generator. First part
         static string random_adventure()
         {
             string[] adventures = { "You walk for hours, almost ready to turn back when: ",
@@ -181,51 +198,63 @@ namespace textRPG
             return new_adv;
         }
 
+        // Outputs all information on passed monster. 
         static void output_monster(Monster monster)
         {
             Console.WriteLine("\nName: " + monster.name + "\nType: " + monster.type + "\nHealth: " + monster.health + "\nMoves: \n" + monster.attack_1_dec + "\n" + monster.attack_2_dec + "\n" + monster.attack_3_dec);
         }
 
+        // Main encounter generation function
         static bool encounter_main(Monster aquarex, Monster infernosaur, Monster pterowind)
         {
+            // Calls random_monster() to get a new monster for encounter
             Monster monster = random_monster();
             Console.WriteLine("\nA wild " + monster.name + " (" + monster.type + ") appears!\n");
-
+            // Prompt player to pick monster
             Monster player_monster = monster_picker(aquarex, infernosaur, pterowind);
-            if(player_monster.name == "Invalid")
+            // If error somehow occurs try again
+            while(player_monster.name == "Invalid")
             {
-                player_monster = monster_picker(aquarex, infernosaur, pterowind);
                 Console.WriteLine("!!! Something went wrong !!!");
+                player_monster = monster_picker(aquarex, infernosaur, pterowind);
             }
+            // Valid pick
             Console.WriteLine("\n" + player_monster.name + " go!");
+            // Go to attack
             attack_main(monster, player_monster);
+            // If all player monsters have fainted, return true to end game.
             if(aquarex.health <= 0 && infernosaur.health <= 0 && pterowind.health <= 0)
             {
                 return true;
             }
+            // Else return false to allow game to continue.
             else
             {
                 return false;
             }
         }
 
+        // Allows user to pick an unfainted monster
         static Monster monster_picker(Monster aquarex, Monster infernosaur, Monster pterowind)
         {
+            // Prompt for player's pick of monster. Output all monsters and their data
             Console.WriteLine("Which monster do you choose?");
             output_monster(aquarex);
             output_monster(infernosaur);
             output_monster(pterowind);
             Console.WriteLine("\nEnter Aquarex, Infernosaur or Pterowind: ");
             string pick = Console.ReadLine();
+            // Ensures valid input
             while (pick != "Aquarex" && pick != "Infernosaur" && pick != "Pterowind" && pick != "aquarex" && pick != "infernosaur" && pick != "pterowind" && pick != "a" && pick != "i" && pick != "p")
             {
                 Console.WriteLine("Invalid choice. Please enter monster's name to call it out (Aquarex, Infernosaur or Pterowind): ");
                 pick = Console.ReadLine();
             }
             
-
+            // Aquarex picked
             if (pick == "Aquarex" || pick == "aquarex" || pick == "a")
-            {
+            {   
+                // Aquarex is fainted
                 if (aquarex.fainted)
                 {
                     Console.WriteLine("\n" + aquarex.name + " has fainted and can't fight anymore... Pick a different monster.");
@@ -236,8 +265,10 @@ namespace textRPG
                     return aquarex;
                 }
             }
+            // Infernosaur picked
             else if (pick == "Infernosaur" || pick == "infernosaur" || pick == "i")
             {
+                // Infernosaur is fainted
                 if (infernosaur.fainted)
                 {
                     Console.WriteLine("\n" + infernosaur.name + " has fainted and can't fight anymore... Pick a different monster.");
@@ -248,8 +279,10 @@ namespace textRPG
                     return infernosaur;
                 }
             }
+            // Pterowind picked
             else if (pick == "Pterowind" || pick == "pterowind" || pick == "p")
             {
+                // Pterowind is fainted
                 if (pterowind.fainted)
                 {
                     Console.WriteLine("\n" + pterowind.name + " has fainted and can't fight anymore... Pick a different monster.");
@@ -260,10 +293,8 @@ namespace textRPG
                     return pterowind;
                 }
             }
-            else
-            {
-                
-            }
+            
+            // Somehow error occured
             Console.WriteLine("An error has occured. Pick was: " + pick);
             Monster empty_monster = new Monster();
             empty_monster.name = "Invalid";
@@ -271,40 +302,49 @@ namespace textRPG
             
         }
 
+        // Function to pick and use an item from inventory
         static Monster use_item(Monster monster)
         {
-
+            //List inventory
             inventory_listing();
             Console.WriteLine("Which item do you want to use? (1,2 or 3)");
             string itemToUse = Console.ReadLine();
+            // Player is out of item, wastes a move
             if ((itemToUse == "1" && Inventory.potion <= 0) || (itemToUse == "2" && Inventory.megaPotion <= 0) || (itemToUse == "3" && Inventory.healAllPotion <= 0))
             {
                 Console.WriteLine("\nYou are out of that item. You waste time looking for the item and lose your turn.");
             }
+            // Player uses item
             else
             {
+                // Use potion
                 if (itemToUse == "1")
                 {
+                    // Back to full health
                     if (monster.health + Potion.healAmount >= monster.init_health)
                     {
                         monster.health = monster.init_health;
                         Inventory.potion -= 1;
                         Console.WriteLine("\nUsed a Potion on " + monster.name + ". Back to full health.\n");
                     }
+                    // Partial heal
                     else if (monster.health + Potion.healAmount < monster.init_health)
                     {
                         monster.health += Potion.healAmount;
                         Console.WriteLine("\nUsed a Potion on " + monster.name + ". Current health: " + monster.health + "\n");
                     }
                 }
+                // Use mega potion
                 else if (itemToUse == "2")
                 {
+                    // Back to full health
                     if (monster.health + MegaPotion.healAmount >= monster.init_health)
                     {
                         monster.health = monster.init_health;
                         Inventory.megaPotion -= 1;
                         Console.WriteLine("\nUsed a Mega Potion on " + monster.name + ". Back to full health.\n");
                     }
+                    // Partial heal
                     else if (monster.health + MegaPotion.healAmount < monster.init_health)
                     {
                         monster.health += MegaPotion.healAmount;
@@ -312,13 +352,16 @@ namespace textRPG
                         Console.WriteLine("\nUsed a Mega Potion on " + monster.name + ". Current health: " + monster.health + "\n");
                     }
                 }
+                // Use healall potion
                 else if (itemToUse == "3")
                 {
+                    // Back to full health
                     if (monster.health + HealAllPotion.healAmount >= monster.init_health)
                     {
                         monster.health = monster.init_health;
                         Console.WriteLine("\nUsed a HealAll Potion on " + monster.name + ". Back to full health.\n");
                     }
+                    // Partial heal
                     else if (monster.health + HealAllPotion.healAmount < monster.init_health)
                     {
                         monster.health += HealAllPotion.healAmount;
@@ -326,26 +369,33 @@ namespace textRPG
                     }
                 }
             }
+            // return monster with new or unmodified health
             return monster;
         }
 
+        // Main attack phase function
         static void attack_main(Monster monster, Monster player_monster)
         {
+            // Player's turn
             Console.WriteLine("\nYour turn!");
             Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
+            // See if user wants to use an item or a move
             Console.WriteLine("Use item or a move? Enter i to open inventory or m to pick a move: ");
             string pick = Console.ReadLine();
+            // If picked item, call use_item()
             if(pick == "i" || pick == "item" || pick == "inventory")
             {
                 player_monster = use_item(player_monster);
             }
+            // Otherwise pick a move
             else
             {
                 string move;
                 Console.WriteLine("Which move should " + player_monster.name + " use?");
-
                 Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
+                // Which move should player monster use? 
                 move = Console.ReadLine();
+                // Ensure valid input
                 while (move != "1" && move != "2" && move != "3")
                 {
                     Console.WriteLine("Invalid choice. Which move should " + player_monster.name + " use (1, 2, or 3)?");
@@ -353,34 +403,40 @@ namespace textRPG
                     Console.WriteLine("\n1. " + player_monster.attack_1_dec + "\n2. " + player_monster.attack_2_dec + "\n3. " + player_monster.attack_3_dec + "\nInput move number (1, 2 or 3): ");
                     move = Console.ReadLine();
                 }
-
+                //  Picked first move
                 if (move == "1")
                 {
                     Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_1_dec + ".");
                     monster.health = attack(player_monster.attack1_1, player_monster.attack1_2, monster.health);
                 }
+                // Picked second move
                 else if (move == "2")
                 {
                     Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_2_dec + ".");
                     monster.health = attack(player_monster.attack2_1, player_monster.attack2_2, monster.health);
                 }
+                // Picked the healing move
                 else if (move == "3")
                 {
                     Console.WriteLine("\n" + player_monster.name + " used " + player_monster.attack_3_dec + ".");
                     int health_roll = roll_dice(player_monster.attack3_1, player_monster.attack3_2);
+                    // Not at full health
                     if (player_monster.health != player_monster.init_health)
                     {
+                        // Player monster heals not to full health
                         if (player_monster.health + health_roll < player_monster.init_health)
                         {
                             player_monster.health -= health_roll;
                             Console.WriteLine("\n" + player_monster.name + "'s health: " + player_monster.health);
                         }
+                        // Player monster heals to full health
                         else if (player_monster.health + health_roll >= player_monster.init_health)
                         {
                             player_monster.health = player_monster.init_health;
                             Console.WriteLine("\n" + player_monster.name + " is back to full health!");
                         }
                     }
+                    // Already at full health
                     else
                     {
                         Console.WriteLine("\nUsed a healing move, but already at full health...");
@@ -485,8 +541,10 @@ namespace textRPG
             }
         }
 
+        // Main function, established the player monsters and calls for more encounters or exits game.
         static void Main(string[] args)
         {
+            // Player monsters
             Monster aquarex = new Monster();
             aquarex.name = "Aquarex";
             aquarex.type = "Water";
@@ -534,23 +592,25 @@ namespace textRPG
             pterowind.attack_3_dec = "Nest: 6-12 heal";
             pterowind.init_health = 100;
             pterowind.fainted = false;
-
-
-
+            // An extra potion player gets in the beginning
+            Inventory.potion += 1;
+            // Introduction
             Console.WriteLine("\n <3 <3 <3 Loading <3 <3 <3 \n");
             Console.WriteLine("       Little Monsters\n\n");
 
             Console.WriteLine("You walk into the field:");
+            // Random story generated
             Console.WriteLine("\n"+ random_adventure() + random_story());
+            // Bool to track if all monsters have fainted
             bool all_down = encounter_main(aquarex, infernosaur, pterowind);
-        
+            // Check if user wants to continue
             Console.WriteLine("\n----------------------------------------------------\n\nContinue your adventure? (Yes or No)\n");
             string cont = Console.ReadLine();
-            
+            // Generate a new encounter
             if(cont == "Yes" || cont == "yes" || cont == "y" || cont == "Y")
             {
-                Console.WriteLine("\n----------------------------------------------------\n");
                 bool continue_game = true;
+                // While user chooses to continue, game continues, unless all monsters have fainted
                 while(continue_game)
                 {
                     Console.WriteLine("\n----------------------------------------------------\n");
@@ -580,7 +640,7 @@ namespace textRPG
                     }
                 }
             }
-
+            // Quit
             else
             {
                 Console.WriteLine("\nYou find your way home and call it a night.");
