@@ -3,5 +3,33 @@
 + Items
 - Continue fighting monster with a different monster (switching)
 - Friendlier UI
-- More story
++ More story
 - More player monsters
+
+Types:
+"Fire","Frost","Ice","Shadow","Evil","Dark","Grass","Water","Bug","Amphibian","Lava","Space","Dinosaur","Magic","Flying","Wind","Fighting"
+
+Type:			Weak to:			Neutral to:			Strong to:		
+
+Fire			Water, Ground		Dark, Space			Grass, Bug,
+				Wind				Magic, Flying		Ice, Fighting		
+
+Ice				Fire, Water			Dark, Bug, Ground	Grass, Space,
+				Fighting			Magic				Flying, Wind
+
+Dark			Fire, Magic			Grass, Water		Bug, Space,
+									Ground, Flying		Fighting, Ice
+									Wind
+
+Grass			Fire, Bug			Dark				Water
+				Ice
+
+
+Water
+Bug
+Ground
+Space
+Magic
+Flying
+Wind
+Fighting

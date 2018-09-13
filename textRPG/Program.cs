@@ -100,6 +100,29 @@ namespace textRPG
         // Randomized name made of prefix and suffix for monster
         static string random_name()
         {
+            /*Random name based on type template:
+             *string name;
+             * int pick1;
+             * int pick2;
+             * string[] fire_name_prefix = { "Fire","Heat","Melt","Lava","Hot","Steam","Magma","Explodo","Flame"};
+             * string[] fire_name_suffix = { "rock","steel","steam","soot"};
+             * string[] ice_name_prefix = { "Ice","Icicle","Frost","Freeze","Snow","Cold","Chill","Hale"};
+             * string[] ice_name_suffix = { "storm","wind"};
+             * etc
+             if (type == "Fire")
+             {
+                pick1 = roll_dice(0, fire_name_prefix.Length-1);
+                pick2 = roll_dice(0, fire_name_suffix.Length-1);
+                name = fire_name_prefix[pick1] + fire_name_suffix[pick2];
+             }
+             else if (type == "Ice")
+             {
+                pick1 = roll_dice(0, ice_name_prefix.Length-1);
+                pick2 = roll_dice(0, ice_name_suffix.Length-1);
+                name = ice_name_prefix[pick1] + ice_name_suffix[pick2];
+             }
+             etc
+             */
             string[] name_prefix = {"Fire","Frost","Wind","Aqua","Wild","Dark","Shadow","Devil","Evil","Spark","Ptero","Terano","Electro","Stego","Mega","Super","Free","Flex","Stone","Ground","Brave","Blood","Carve","Bone","Beak","Fast","Fright","Moon","Mad","Keen","Claw"};
             string[] name_suffix = {"rex","osaur","es","saur","husk","devil","aur","bor","bird","zard","snake","raptor","sire","sear","fly","dive","crave","dial","dex","lex","ier","tear","cry"};
             int pick1 = roll_dice(0, name_prefix.Length-1);
@@ -133,6 +156,11 @@ namespace textRPG
             Monster monster = new Monster();
             monster.name = random_name();
             monster.type = random_type();
+            /* 
+                monster.type = random_type();
+                string type = monster.type;
+                monster.name = random_name(type);
+            */
             monster.health = roll_dice(80, 150);
             monster.init_health = monster.health;
             monster.attack1_1 = roll_dice(10, 13);
