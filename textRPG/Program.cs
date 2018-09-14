@@ -104,11 +104,31 @@ namespace textRPG
              *string name;
              * int pick1;
              * int pick2;
-             * string[] fire_name_prefix = { "Fire","Heat","Melt","Lava","Hot","Steam","Magma","Explodo","Flame"};
-             * string[] fire_name_suffix = { "rock","steel","steam","soot"};
+             * string[] fire_name_prefix = { "Fire","Heat","Melt","Lava","Hot","Steam","Magma","Explodo","Flame","Inferno"};
+             * string[] fire_name_suffix = { "rock","steel","steam","soot","ash","saur","rex","sear","burn","smoke","fry"};
              * string[] ice_name_prefix = { "Ice","Icicle","Frost","Freeze","Snow","Cold","Chill","Hale"};
-             * string[] ice_name_suffix = { "storm","wind"};
-             * etc
+             * string[] ice_name_suffix = { "storm","wind","y","icer","mare","saur","rex","ray"," Beast"," Bird", " Bear"};
+             * string[] dark_name_prefix = { "Evil","Devil","Dark","Dread","Fear","Sorrow","Broken","Shadow","Shade","Black","Grey","Fright","Horror"};
+             * string[] dark_name_suffix = { " Devil"," Raven"," Bat"," Wolf","beast"," Abomination"," King"," Viper", "rey","saur","rex"};
+             * string[] grass_name_prefix = { "Leaf","Branch","Tree","Greene","Bloom","Aroma","Polen","Honey","Sweet","Fresh"};
+             * string[] grass_name_suffix = { " Flower", "stick","grow","root","fruit","berry","sprout"};
+             * string[] water_name_prefix = { "Flow","Spring","River","Sea","Ocean","Dive","Wave","Splash","Serene","Aqua","Coral","Reef","Float"};
+             * string[] water_name_suffix = { "bubble","stream","deapth","stormer","rainy","row","fin","gills","deep","er","ay","saur","rex","fei"};
+             * string[] bug_name_prefix = { "Fire", "Manywing","Golden","Stripe","Shine","Horn","Centi","Butter","Dragon"};
+             * string[] bug_name_suffix = { "buzz","fly","wing","pede","soar","crawl","ezz","flap","ula","bite","sting"};
+             * string[] ground_name_prefix = { "Rock","Sedament","Sand","Stone","Lime","Lava","Earth","Minera","Granite","Mud","Clay","Dust","Marble"};
+             * string[] ground_name_suffix = { "stomper","or","quake","shake","storm","dig","dug","mantle","melt","saur","rex","ren","more"};
+             * string[] space_name_prefix = { "Gravity","Float","Cosmos","Alien","Space","Specimen","Abduct","Extraterestrial","Mars","Venus","Saturn","Pluto","Titan"};
+             * string[] space_name_suffix = { "invader","pilot","destroyer","or","er","man","void","matter","leader","soldier"};
+             * string[] magic_name_prefix = { "Magic","Enchant","Mystery","Secret","Mana","Potion","Wizard","Witch","Wiz"};
+             * string[] magic_name_suffix = { "cultist","ed","ment","robed","mage","mirage","trick"};
+             * string[] flying_name_prefix = { "Fly","Soar","Feather","Blue","Red","Golden","Ptero","Split","Roam","Caw","Raven"};
+             * string[] flying_name_suffix = { "wing","puff","beak","claw","tail"};
+             * string[] wind_name_prefix = { "Wind","Gull","Breath","Breathe","Gust","Flow","Storm","Twister"};
+             * string[] wind_name_suffix = { "blow","er","ex","fresh","free","sky","atmos","air","ozoner"};
+             * string[] fighting_name_prefix = { "Fist","Kick","Knock","Punch","Uppercut","Martial","Melee"};
+             * string[] fighting_name_suffix = { "fighter","puncher","out","soldier","knight","hitter"};
+             *
              if (type == "Fire")
              {
                 pick1 = roll_dice(0, fire_name_prefix.Length-1);
@@ -121,7 +141,67 @@ namespace textRPG
                 pick2 = roll_dice(0, ice_name_suffix.Length-1);
                 name = ice_name_prefix[pick1] + ice_name_suffix[pick2];
              }
-             etc
+             else if (type == "Dark")
+             {
+                pick1 = roll_dice(0, dark_name_prefix.Length-1);
+                pick2 = roll_dice(0, dark_name_suffix.Length-1);
+                name = dark_name_prefix[pick1] + dark_name_suffix[pick2];
+             }
+             else if (type == "Grass")
+             {
+                pick1 = roll_dice(0, grass_name_prefix.Length-1);
+                pick2 = roll_dice(0, grass_name_suffix.Length-1);
+                name = grass_name_prefix[pick1] + grass_name_suffix[pick2];
+             }
+             else if (type == "Water")
+             {
+                pick1 = roll_dice(0, water_name_prefix.Length-1);
+                pick2 = roll_dice(0, water_name_suffix.Length-1);
+                name = water_name_prefix[pick1] + water_name_suffix[pick2];
+             }
+             else if (type == "Bug")
+             {
+                pick1 = roll_dice(0, bug_name_prefix.Length-1);
+                pick2 = roll_dice(0, bug_name_suffix.Length-1);
+                name = bug_name_prefix[pick1] + bug_name_suffix[pick2];
+             }
+             else if (type == "Ground")
+             {
+                pick1 = roll_dice(0, ground_name_prefix.Length-1);
+                pick2 = roll_dice(0, ground_name_suffix.Length-1);
+                name = ground_name_prefix[pick1] + ground_name_suffix[pick2];
+             }
+             else if (type == "Space")
+             {
+                pick1 = roll_dice(0, space_name_prefix.Length-1);
+                pick2 = roll_dice(0, space_name_suffix.Length-1);
+                name = space_name_prefix[pick1] + space_name_suffix[pick2];
+             }
+             else if (type == "Magic")
+             {
+                pick1 = roll_dice(0, magic_name_prefix.Length-1);
+                pick2 = roll_dice(0, magic_name_suffix.Length-1);
+                name = magic_name_prefix[pick1] + magic_name_suffix[pick2];
+             }
+             else if (type == "Flying")
+             {
+                pick1 = roll_dice(0, flying_name_prefix.Length-1);
+                pick2 = roll_dice(0, flying_name_suffix.Length-1);
+                name = flying_name_prefix[pick1] + flying_name_suffix[pick2];
+             }
+             else if (type == "Wind")
+             {
+                pick1 = roll_dice(0, wind_name_prefix.Length-1);
+                pick2 = roll_dice(0, wind_name_suffix.Length-1);
+                name = dark_name_prefix[pick1] + wind_name_suffix[pick2];
+             }
+             else if (type == "Fighting")
+             {
+                pick1 = roll_dice(0, fighting_name_prefix.Length-1);
+                pick2 = roll_dice(0, fighting_name_suffix.Length-1);
+                name = fighting_name_prefix[pick1] + fighting_name_suffix[pick2];
+             }
+             return name;
              */
             string[] name_prefix = {"Fire","Frost","Wind","Aqua","Wild","Dark","Shadow","Devil","Evil","Spark","Ptero","Terano","Electro","Stego","Mega","Super","Free","Flex","Stone","Ground","Brave","Blood","Carve","Bone","Beak","Fast","Fright","Moon","Mad","Keen","Claw"};
             string[] name_suffix = {"rex","osaur","es","saur","husk","devil","aur","bor","bird","zard","snake","raptor","sire","sear","fly","dive","crave","dial","dex","lex","ier","tear","cry"};
